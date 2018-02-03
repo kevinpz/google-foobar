@@ -1,90 +1,79 @@
 #!/usr/bin/env python2
-"""
-For the all_paths array, here the code:
-0 = never visited
-1 = wall
-2 = already visited
-3 = current path
-9 = exit door
-"""
 
 from copy import deepcopy
 
-ALLOW_REMOVE = 1
-
-def nice_print(cur_path):
-	for row in cur_path:
+def nice_array_print(tab):
+	for row in tab:
 		print row
-	print
 
-def make_move(cur_path, i, j, rem):
-	found = 0
-	if cur_path[i][j] == 0:
-		cur_path[i][j] = 3
-	elif cur_path[i][j] == 1 and rem < ALLOW_REMOVE:
-		cur_path[i][j] = 3
-		rem += 1
-	elif cur_path[i][j] == 9:
-		cur_path[i][j] = 3
-		found = sum(mypath.count(3) for mypath in cur_path)
-	else:
-		found = -1
-	
-	print(sum(mypath.count(3) for mypath in cur_path))
-	my_path = [cur_path, i, j, rem]
-	nice_print(cur_path)
-	return found, my_path
+def update_pos(maze, tab, height, width, i, j):
+	cur_size = tab [i][j]
+	possible_move = []
+	if i - 1 >= 0:
+		possible_move.append([i - 1, j])
+
+	if j - 1 >= 0:
+		possible_move.append([i, j - 1])
+
+	if i + 1 < height:
+		possible_move.append([i + 1, j])
+
+	if j + 1 < width:
+		possible_move.append([i, j + 1])
+
+	for x,y in possible_move:
+		maze_val = maze[x][y] * 999 + 1
+		if tab[x][y] > cur_size + maze_val:
+			tab[x][y] = cur_size + maze_val
+			update_pos(maze, tab, height, width, x, y)
+
+def find_path(maze, tab, height, width):
+	for i in range(height):
+		for j in range(width):
+			update_pos(maze, tab, height, width, i, j)
+
 
 def answer(maze):
 	height = len(maze)
 	width = len(maze[0])
-	all_paths = []
-	shortest_path = height + width - 1
-	sol_path_size = []
 
-	path = deepcopy(maze)
-	path[0][0], path[height - 1][width - 1] = 3, 9
-	my_path = [path, 0, 0, 0]
+	tab = [[10000 for i in range(width)] for j in range (height)]
+	tab[0][0] = 1
 
-	all_paths.append(my_path)
+	find_path(maze, tab, height, width)
+	size = tab[height - 1][width - 1]
 
-	while all_paths:
-		cur_path, i, j, rem = all_paths.pop()
+	all_solutions = []
+	all_solutions.append(size)
 
-		possible_move = []
-		if i + 1 < width:
-			possible_move.append([i + 1, j])
-		#if i - 1 >= 0:
-		#	possible_move.append([i - 1, j])
-		if j + 1 < height:
-			possible_move.append([i, j + 1])
-		#if j - 1 >= 0:
-		#	possible_move.append([i, j - 1])
+	for i in range(height):
+		for j in range(width):
+			if maze[i][j] == 1:
+				print(i,j)
+				backup_tab = deepcopy(tab)
+				maze[i][j] = 0
+				tab[i][j] -= 999
+				update_pos(maze, tab, height, width, i, j)
+				size = tab[height - 1][width - 1]
+				all_solutions.append(size)
+				maze[i][j] = 1
+				tab = deepcopy(backup_tab)
 
-		prev_path = deepcopy(cur_path)
-		for i, j in possible_move:
-			cur_path = deepcopy(prev_path)
-			found, my_path = make_move(cur_path, i, j, rem)
-			if found == 0:
-				all_paths.append(my_path)
-			elif found == shortest_path:
-				print("Shortest solution found: " + str(found))
-				return found
-			elif found > 0:
-				sol_path_size.append(found)
 
-	solution = min(sol_path_size)
-	print("Short solution found: " + str(solution))
-	return solution
+	print(min(all_solutions))
+	return min(all_solutions)
 
+
+
+#maze = [[0, 1, 1], [0, 1, 0], [0, 0, 0]]
+#answer(maze)
+#7
 
 maze = [[0, 1, 1, 0], [0, 0, 0, 1], [1, 1, 0, 0], [1, 1, 1, 0]]
+maze = [[0, 1, 1, 0], [0, 0, 0, 1], [1, 1, 0, 1], [1, 1, 1, 0]]
 answer(maze)
 #7
 
-maze = [[0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0]]
-answer(maze)
+#maze = [[0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0]]
+#answer(maze)
 #11
-
-maze = [[0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-answer(maze)
