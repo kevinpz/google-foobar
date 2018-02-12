@@ -9,6 +9,7 @@ def generousCase(total_lambs):
 		remaining -= current
 		number += 1
 		last = current
+		#new henchman have twice the value of the previous one
 		current *= 2
 
 	#check if we can add a final one with the remaining lambs
@@ -24,6 +25,7 @@ def stingyCase(total_lambs):
 	while (remaining >= current):
 		remaining -= current
 		number += 1
+		#new henchman have the sum of the 2 previous one
 		last, current = current, last + current
 	return number
 
