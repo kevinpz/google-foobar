@@ -30,12 +30,6 @@ def update_pos(maze, tab, height, width, i, j):
 			#and we recurse on the new case to propagate it to the other cases
 			update_pos(maze, tab, height, width, x, y)
 
-def find_path(maze, tab, height, width):
-	#for each case in our maze, we are going to update their distance to the start position
-	for i in range(height):
-		for j in range(width):
-			update_pos(maze, tab, height, width, i, j)
-
 def remove_wall(maze, tab, height, width, all_solutions):
 	#now we will try to remove wall
 	#so we need to remove all the walls one by one and check for the size
@@ -68,7 +62,8 @@ def answer(maze):
 	tab[0][0] = 1
 
 	#let's try without removing wall
-	find_path(maze, tab, height, width)
+	#find_path(maze, tab, height, width)
+	update_pos(maze, tab, height, width, 0, 0)
 	#get the minimal number of move if we dont remvove any wall
 	size = tab[height - 1][width - 1]
 
