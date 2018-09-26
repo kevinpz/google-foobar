@@ -38,13 +38,14 @@ def answer(plaintext):
 
     return res
 
+
 def check_solution(res, solution):
     print(res)
     print(solution)
     print(res == solution)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     plaintext = "code"
     res = answer(plaintext)
     check_solution(res, "100100101010100110100010")
