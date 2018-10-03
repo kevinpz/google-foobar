@@ -1,21 +1,19 @@
 def answer(xs):
     xs.sort()
-    negative_nb =  [n for n in xs if n < 0]
-    positive_nb =  [n for n in xs if n > 0]
+    negative_nb = [n for n in xs if n < 0]
+    positive_nb = [n for n in xs if n > 0]
+    zero_nb = [n for n in xs if n == 0]
 
-    if len(negative_nb) % 2 == 1 and len(positive_nb) > 0:
+    if len(negative_nb) % 2 == 1 and (len(positive_nb) > 0 or len(zero_nb) > 0):
         negative_nb.pop()
 
     nb = negative_nb + positive_nb
     res = 1
 
-    if len(nb) == 0:
-        res = 0
-
     for n in nb:
         res *= n
 
-    if res < 0 and 0 in xs:
+    if len(nb) == 0:
         res = 0
 
     return str(res)
