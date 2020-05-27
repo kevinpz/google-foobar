@@ -2,7 +2,7 @@ from itertools import combinations
 
 
 def solution(l):
-    # For each size possible, starting from the biggest
+    # For each possible size, starting from the biggest
     for size in reversed(range(1, len(l) + 1)):
         res = []
         # Get all the possible combinations from the input and the current size
@@ -18,4 +18,5 @@ def solution(l):
         if res:
             return int("".join(map(str, res[0])))
 
+    # There is no solution
     return 0

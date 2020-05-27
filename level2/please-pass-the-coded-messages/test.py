@@ -15,4 +15,3 @@ def test_solution_2():
 
 def test_solution_3():
     assert solution([9, 9, 9, 9, 9, 9, 9, 9, 9]) == 999999999
-
